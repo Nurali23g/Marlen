@@ -1,3 +1,29 @@
 https://ozon.kz/api/entrypoint-api.bx/page/json/v2?url=%2Fproduct%2F{numeric_id}%2F%3F_bctx%3DCAQQqOVB%26at%3D16tL2EnnGI1ZoLOGS8O6Eq1TjV31BrcZRx49NhK98mXK%26hs%3D1%26layout_container%3DpdpPage2column%26layout_page_index%3D2%26sh%3D4RbH65Cmzw%26start_page_id%3D3d076f87e399934469dd74e387989c1d
 
 https://api.halykmarket.kz/rees46adapter/categories/v2?locationId=-2
+
+
+import requests
+
+def fetch_categories(url):
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+def extract_categories(categories_list, collected=None):
+    if collected is None:
+        collected = []
+    for category in categories_list:
+        collected.append({"id": category["id"], "name": category["name"]})
+        if category.get("children"):
+            extract_categories(category["children"], collected)
+    return collected
+
+if __name__ == "__main__":
+    url = "https://api.halykmarket.kz/rees46adapter/categories/v2?locationId=-2"
+    categories_data = fetch_categories(url)
+    all_categories = extract_categories(categories_data)
+
+    # Print all category IDs and names
+    for cat in all_categories:
+        print(f'ID: {cat["id"]}, Name: {cat["name"]}')
