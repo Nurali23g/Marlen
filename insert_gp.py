@@ -1,4 +1,7 @@
-
+TABLE_NAME = "fgp_de_sandbox.test_halyk_categories_all"
+CSV_FILE = "halyk_all_categories.csv"
+COLUMNS = ["id", "name", "external_id", "parent_id"]
+TRUNC = True
 def insert_csv_rows(
     csv_path: str,
     conn_params: dict,
@@ -108,3 +111,4 @@ if __name__ == "__main__":
     )
 
     print("Готово: все строки вставлены.")
+
