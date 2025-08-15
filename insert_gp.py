@@ -2,6 +2,16 @@ TABLE_NAME = "fgp_de_sandbox.test_halyk_categories_all"
 CSV_FILE = "halyk_all_categories.csv"
 COLUMNS = ["id", "name", "external_id", "parent_id"]
 TRUNC = True
+
+
+select count(distinct category)
+from fgp_de_sandbox.test_halyk_merchants_all a
+where category not in (select distinct merchant_name
+from fgp_de_sandbox.test_halyk_merchants_all
+where category in ('1', '2', '6', '3', '4', '8', '9', '32626', '11', '5' )
+)
+
+
 def insert_csv_rows(
     csv_path: str,
     conn_params: dict,
@@ -111,4 +121,5 @@ if __name__ == "__main__":
     )
 
     print("Готово: все строки вставлены.")
+
 
