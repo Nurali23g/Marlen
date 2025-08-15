@@ -19,28 +19,35 @@ where category in ('1', '2', '6', '3', '4', '8', '9', '32626', '11', '5' )
 
 
 
-WITH RECURSIVE cat_tree AS (
-    -- seed: the root external_ids you want to exclude
-    SELECT id, external_id, parent_id
+WITH RECURSIVE category_roots AS (
+    -- Start from all categories (each category is its own starting point)
+    SELECT 
+        id,
+        external_id,
+        parent_id,
+        external_id AS root_external_id
     FROM fgp_de_sandbox.test_halyk_categories_all
-    WHERE external_id IN ('1','2','3','4','5','6','8','9','11','32626')
+    WHERE parent_id IS NULL  -- roots
 
     UNION ALL
 
-    -- walk down to all descendants
-    SELECT c.id, c.external_id, c.parent_id
+    -- Walk down the tree, but keep the root ID from the start
+    SELECT 
+        c.id,
+        c.external_id,
+        c.parent_id,
+        p.root_external_id
     FROM fgp_de_sandbox.test_halyk_categories_all c
-    JOIN cat_tree p ON c.parent_id = p.id
+    JOIN category_roots p ON c.parent_id = p.id
 )
-SELECT m.*
+SELECT 
+    r.root_external_id AS root_category,
+    COUNT(DISTINCT m.merchant_id) AS merchant_count
 FROM fgp_de_sandbox.test_halyk_merchants_all m
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM cat_tree t
-    WHERE m.category::text = t.external_id::text
-);
-
-
+JOIN category_roots r 
+    ON m.category::text = r.external_id::text
+GROUP BY r.root_external_id
+ORDER BY merchant_count DESC;
 
 
 
@@ -160,6 +167,7 @@ if __name__ == "__main__":
     )
 
     print("Готово: все строки вставлены.")
+
 
 
 
