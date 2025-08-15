@@ -12,6 +12,45 @@ where category in ('1', '2', '6', '3', '4', '8', '9', '32626', '11', '5' )
 )
 
 
+
+
+
+
+
+
+
+WITH RECURSIVE cat_tree AS (
+    -- seed: the root external_ids you want to exclude
+    SELECT id, external_id, parent_id
+    FROM fgp_de_sandbox.test_halyk_categories_all
+    WHERE external_id IN ('1','2','3','4','5','6','8','9','11','32626')
+
+    UNION ALL
+
+    -- walk down to all descendants
+    SELECT c.id, c.external_id, c.parent_id
+    FROM fgp_de_sandbox.test_halyk_categories_all c
+    JOIN cat_tree p ON c.parent_id = p.id
+)
+SELECT m.*
+FROM fgp_de_sandbox.test_halyk_merchants_all m
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM cat_tree t
+    WHERE m.category::text = t.external_id::text
+);
+
+
+
+
+
+
+
+
+
+
+
+
 def insert_csv_rows(
     csv_path: str,
     conn_params: dict,
@@ -121,5 +160,6 @@ if __name__ == "__main__":
     )
 
     print("Готово: все строки вставлены.")
+
 
 
