@@ -1,12 +1,11 @@
 SELECT 
-    m.merchant_name,
-    COALESCE(c1.external_id, m.category_id) AS category_id,
-    COALESCE(c1.name, c2.name) AS category_name
-FROM merchants m
-LEFT JOIN categories c1               -- case: merchant has parent id
-       ON m.category_id = c1.id
-LEFT JOIN categories c2               -- case: merchant already has external_id
-       ON m.category_id = c2.external_id;
+    distinct c1.external_id
+FROM fgp_de_sandbox.test_halyk_merchants_all m
+LEFT JOIN fgp_de_sandbox.test_halyk_categories_all c1               
+       ON m.category = c1.id
+LEFT JOIN fgp_de_sandbox.test_halyk_categories_all c2               
+       ON m.category = c2.external_id
+where c1.external_id not in ('1', '2', '6', '3', '4', '8', '9', '32626', '11', '5' )
 
 
 3733 красота и здоровье, 
