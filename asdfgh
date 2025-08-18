@@ -7,3 +7,10 @@ LEFT JOIN categories c1               -- case: merchant has parent id
        ON m.category_id = c1.id
 LEFT JOIN categories c2               -- case: merchant already has external_id
        ON m.category_id = c2.external_id;
+
+
+3733 красота и здоровье, 
+3787 красота и здоровье, 
+3810 Досуг и творчество, 
+3761 продукты питания,  
+lets just add them by hand i can find their
