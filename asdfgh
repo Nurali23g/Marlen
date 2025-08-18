@@ -1,0 +1,8 @@
+SELECT 
+    m.merchant_name,
+    c.external_id AS category_id,
+    c.name AS category_name
+FROM merchants m
+LEFT JOIN categories c 
+       ON m.category_id = c.id
+WHERE c.parent_id IS NULL;
