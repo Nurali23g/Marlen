@@ -8,13 +8,52 @@ LEFT JOIN fgp_de_sandbox.test_halyk_categories_all c2
 where c1.external_id not in ('1', '2', '6', '3', '4', '8', '9', '32626', '11', '5' )
 
 
-3733 красота и здоровье, 
-3787 красота и здоровье, 
-3810 Досуг и творчество, 
-3761 продукты питания,  
-lets just add them by hand i can find their
+WITH RECURSIVE cat_hierarchy AS (
+    -- start from the category merchant is linked to
+    SELECT 
+        m.merchant_id,
+        m.category AS merchant_category_id,
+        c.id,
+        c.external_id,
+        c.parent_id
+    FROM fgp_de_sandbox.test_halyk_merchants_all m
+    LEFT JOIN fgp_de_sandbox.test_halyk_categories_all c
+           ON m.category = c.id OR m.category = c.external_id
 
-SELECT 
+    UNION ALL
+
+    -- climb upwards to the parent
+    SELECT 
+        ch.merchant_id,
+        ch.merchant_category_id,
+        p.id,
+        p.external_id,
+        p.parent_id
+    FROM cat_hierarchy ch
+    JOIN fgp_de_sandbox.test_halyk_categories_all p
+         ON ch.parent_id = p.id
+)
+SELECT DISTINCT ch.external_id AS root_external_id
+FROM cat_hierarchy ch
+-- keep only the root categories (those without parent)
+WHERE ch.parent_id IS NULL
+  AND ch.external_id NOT IN ('1','2','6','3','4','8','9','32626','11','5');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     m.merchant_name,
     COALESCE(
         c1.external_id, 
