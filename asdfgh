@@ -1,8 +1,9 @@
 SELECT 
     m.merchant_name,
-    c.external_id AS category_id,
-    c.name AS category_name
+    COALESCE(c1.external_id, m.category_id) AS category_id,
+    COALESCE(c1.name, c2.name) AS category_name
 FROM merchants m
-LEFT JOIN categories c 
-       ON m.category_id = c.id
-WHERE c.parent_id IS NULL;
+LEFT JOIN categories c1               -- case: merchant has parent id
+       ON m.category_id = c1.id
+LEFT JOIN categories c2               -- case: merchant already has external_id
+       ON m.category_id = c2.external_id;
