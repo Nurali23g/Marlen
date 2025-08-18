@@ -17,20 +17,33 @@ lets just add them by hand i can find their
 
 SELECT 
     m.merchant_name,
-    COALESCE(c1.external_id, c2.external_id, cparent.external_id, m.category_id) AS category_id,
-    COALESCE(c1.name, c2.name, cparent.name) AS category_name
+    COALESCE(
+        c1.external_id, 
+        c2.external_id, 
+        CASE m.category_id
+            WHEN 3733 THEN 8
+            WHEN 3787 THEN 8
+            WHEN 3810 THEN 33119
+            WHEN 3761 THEN 13
+            ELSE m.category_id
+        END
+    ) AS category_id,
+    COALESCE(
+        c1.name, 
+        c2.name, 
+        CASE m.category_id
+            WHEN 3733 THEN 'Красота и здоровье'
+            WHEN 3787 THEN 'Красота и здоровье'
+            WHEN 3810 THEN 'Досуг и творчество'
+            WHEN 3761 THEN 'Продукты питания'
+        END
+    ) AS category_name
 FROM merchants m
 LEFT JOIN categories c1
        ON m.category_id = c1.id
 LEFT JOIN categories c2
-       ON m.category_id = c2.external_id
-LEFT JOIN categories cparent
-       ON CASE m.category_id
-              WHEN 3733 THEN 8
-              WHEN 3787 THEN 8
-              WHEN 3810 THEN 33119
-              WHEN 3761 THEN 13
-          END = cparent.id;
+       ON m.category_id = c2.external_id;
+
 
 
 
