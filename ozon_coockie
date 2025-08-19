@@ -1,0 +1,123 @@
+async def set_cookies(browser):
+    """Добавляет куку для подтверждения возраста."""
+    await browser.get("https://ozon.kz")  # Открываем сайт, чтобы установить куку
+    await browser.add_cookie({
+        "name": "adult_user_birthdate",
+        "value": "1990-01-01",
+        "domain": ".ozon.kz",
+        "path": "/",
+    })
+    print("✅ Кука adult_user_birthdate=1990-01-01 добавлена")
+
+
+
+
+import json
+import asyncio
+from selenium_driverless import webdriver
+from selenium_driverless.types.options import Options
+from selenium_driverless.types.by import By
+import time
+
+# Пути к файлам
+PRODUCTS_FILE = "ozon_new/all_first_products.txt"
+OUTPUT_FILE = "ozon_new/product_details.json"
+DATA_FOLDER = "ozon_new/results"
+
+# Размер батча для сохранения
+BATCH_SIZE = 1000
+
+async def wait_for_element(browser, selector, timeout=10):
+    """Ждёт появления элемента на странице."""
+    for _ in range(timeout):
+        try:
+            element = await browser.find_element(By.CSS_SELECTOR, selector)
+            if element:
+                return element
+        except Exception:
+            await asyncio.sleep(1)  # Ждём 1 секунду перед повторной попыткой
+    return None
+
+async def set_cookies(browser):
+    """Добавляет куку для подтверждения возраста."""
+    await browser.get("https://ozon.kz")  # Открываем сайт, чтобы установить куку
+    await browser.add_cookie({
+        "name": "adult_user_birthdate",
+        "value": "1990-01-01",
+        "domain": ".ozon.kz",
+        "path": "/",
+    })
+    print("✅ Кука adult_user_birthdate=1990-01-01 добавлена")
+
+async def fetch_api_data(browser, product_link, is_first=False):
+    """Открывает API-ссылку и получает JSON-ответ."""
+    api_url = f"https://ozon.kz/api/entrypoint-api.bx/page/json/v2?url=%2Fproduct%2F{product_link}%2F%3F_bctx%3DCAQQg5-IAQ%26at%3DjYtZOWQQKt9OqDA8iArM0MEtxWgxkwU4GQ5JyurGzAjD%26avtc%3D1%26avte%3D4%26avts%3D1738923569%26hs%3D1%26layout_container%3DpdpPage2column%26layout_page_index%3D2%26sh%3DQ0t7iKmkwg%26start_page_id%3D6da69ecc551321c18a299ed66c6f7088"
+
+    print(f"🔍 Открываю API: {api_url}")
+    await browser.get(api_url)
+
+    if is_first:
+        print("⏳ Ожидание 10 секунд для первой ссылки...")
+        time.sleep(10)
+
+    await wait_for_element(browser, "body")
+
+    try:
+        response_text = await browser.execute_script("return document.body.innerText;")
+        data = json.loads(response_text)
+
+        widget_key = next((key for key in data.get("widgetStates", {}) if key.startswith("webCurrentSeller")), None)
+        if widget_key:
+            return data["widgetStates"][widget_key]
+
+    except Exception as e:
+        print(f"⚠ Ошибка парсинга API {api_url}: {e}")
+
+    return None
+
+async def save_batch(results, batch_number):
+    """Сохраняет батч данных в файл."""
+    output_path = f"{DATA_FOLDER}/product_details_batch_{batch_number}.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=4, ensure_ascii=False)
+    print(f"✅ Батч {batch_number} сохранен в {output_path}")
+    
+
+async def main():
+    with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
+        product_links = [line.strip().split("/")[-1] for line in f if line.strip()]
+
+    options = Options()
+    options.headless = False
+
+    browser = await webdriver.Chrome(options=options).start_session()
+    await set_cookies(browser)
+
+    results = {}
+    batch_number = 1
+    items_processed = 0
+
+    for i, product_link in enumerate(product_links):
+        data = await fetch_api_data(browser, product_link, is_first=(i == 0))
+        if data:
+            results[product_link] = data
+            print(f"✅ Данные получены для {product_link}")
+        else:
+            print(f"⚠ Данные не получены для {product_link}")
+
+        items_processed += 1
+        if items_processed % BATCH_SIZE == 0:
+            await save_batch(results, batch_number)
+            results = {}  # Очищаем результаты для следующего батча
+            batch_number += 1
+
+    # Сохраняем последний батч, если он не полный
+    if results:
+        await save_batch(results, batch_number)
+
+    print(f"✅ Все данные обработаны и сохранены в батчах.")
+
+    await browser.quit()
+
+# Запуск
+asyncio.run(main())
