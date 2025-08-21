@@ -18,23 +18,20 @@ ADD COLUMN is_new_data boolean NOT NULL DEFAULT false;
 Мебель  Furniture
 
 
-
-
-CREATE TABLE fgp_de_sandbox.kaspi_merchants_categories (
-	id varchar(100) NULL,
-	parent_id varchar(100) NULL,
-	title varchar(100) NULL,
-	titleru varchar(100) NULL,
-	link varchar(100) NULL,
-	"active" bool NULL,
-	count numeric NULL,
-	popularity numeric NULL,
-	expanded bool NULL,
-	"level" numeric NULL
+CREATE TABLE fgp_dsx_dm.kaspi_merchants_detailed (
+	merchant_id varchar(50) NULL,
+	"name" varchar(100) NULL,
+	phone varchar(20) NULL,
+	create_date varchar(50) NULL,
+	salescount numeric NULL,
+	rating numeric NULL,
+	ratingcount numeric NULL,
+	reviewscount numeric NULL,
+	parse_date date NULL
 )
 WITH (
 	appendonly=true,
 	compresstype=zstd,
 	compresslevel=3
 )
-DISTRIBUTED BY (id);
+DISTRIBUTED BY (merchant_id);
