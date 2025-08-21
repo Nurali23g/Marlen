@@ -1,20 +1,20 @@
-alter table
-add column fff boolean not null default False
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN articul varchar(100);
 
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN brand varchar(100);
 
-CREATE TABLE fgp_dsx_dm.kaspi_merchants (
-	id varchar(100) NULL,
-	merchant_id varchar(50) NULL,
-	title varchar(100) NULL,
-	"name" varchar(100) NULL,
-	count numeric NULL,
-	popularity numeric NULL,
-	category varchar(50) NULL,
-	parse_date date NULL
-)
-WITH (
-	appendonly=true,
-	compresstype=zstd,
-	compresslevel=3
-)
-DISTRIBUTED BY (id);
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN sales_per_day numeric;
+
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN price numeric;
+
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN rating numeric;
+
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN reviews_count numeric;
+
+ALTER TABLE fgp_dsx_dm.kaspi_merchants
+ADD COLUMN is_new_data boolean NOT NULL DEFAULT false;
