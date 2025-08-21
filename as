@@ -16,3 +16,25 @@ ADD COLUMN is_new_data boolean NOT NULL DEFAULT false;
 Компьютеры  Computers
 Красота_и_здоровье  Beauty care
 Мебель  Furniture
+
+
+
+
+CREATE TABLE fgp_de_sandbox.kaspi_merchants_categories (
+	id varchar(100) NULL,
+	parent_id varchar(100) NULL,
+	title varchar(100) NULL,
+	titleru varchar(100) NULL,
+	link varchar(100) NULL,
+	"active" bool NULL,
+	count numeric NULL,
+	popularity numeric NULL,
+	expanded bool NULL,
+	"level" numeric NULL
+)
+WITH (
+	appendonly=true,
+	compresstype=zstd,
+	compresslevel=3
+)
+DISTRIBUTED BY (id);
