@@ -1,3 +1,22 @@
+CREATE EXTERNAL TABLE gpdb.fgp_dsx_ext.ext_ozon_merchants (
+	supplier_id numeric,
+	text varchar,
+	bin varchar
+)
+LOCATION (
+	'gpfdist://10.0.84.192:8088/ozon_merchants.csv'
+) ON ALL
+FORMAT 'CSV' ( delimiter '|' null '' escape '\' quote '"' )
+ENCODING 'UTF8';
+
+
+
+
+
+
+
+
+
 ALTER TABLE fgp_dsx_dm.kaspi_merchants
 ADD COLUMN brand varchar(100),
 ADD COLUMN articul varchar(100),
