@@ -186,3 +186,16 @@ CREATE TABLE fgp_de_sandbox.kill_kaspi_merchants (
 	is_new_data bool DEFAULT false NOT NULL
 )
 DISTRIBUTED BY (id);
+
+"id","merchant_id","title","name","count","popularity","category","parse_date","count_articuls","count_brand","sales_per_day","min_price","max_price","is_new_data"
+"30291103_desktops","30291103",ИП TECH ORDA ELECTRONIC,ИП TECH ORDA ELECTRONIC,3,0,desktops,2025-08-11,,,,,,false
+"30359584_bedroom mattresses","30359584",ECO MATRAS,ECO MATRAS,31,0,bedroom mattresses,2025-08-11,,,,,,false
+"15013183_desktops","15013183",UA Store,UA Store,1,0,desktops,2025-08-11,,,,,,false
+"30296028_bedroom mattresses","30296028",ТОО YOURHOUSE,ТОО YOURHOUSE,31,1,bedroom mattresses,2025-08-11,,,,,,false
+"30336222_steam generators","30336222",ИП МАРИЯМ,ИП МАРИЯМ,4,0,steam generators,2025-02-06,,,,,,false
+"30071150_foundation primers","30071150",Arzan.shop,Arzan.shop,1,1,foundation primers,2025-02-05,,,,,,false
+"30330712_stoves and grills","30330712",ИП SHOPPING,ИП SHOPPING,16,5,stoves and grills,2025-02-13,,,,,,false
+"30136823_kitchen gloves","30136823",ASM CHEMIA GROUP,ASM CHEMIA GROUP,6,2,kitchen gloves,2025-02-07,,,,,,false
+
+
+
